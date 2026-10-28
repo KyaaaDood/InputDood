@@ -1,5 +1,7 @@
 # 🎮 InputDood — Guide + Start task killer & mouse mode for XInput controllers
 
+🇬🇧 English | [🇲🇽 Español](README.es.md)
+
 Ultra lightweight AutoHotkey v2 script that runs in the background and sends **WinClose + WinKill** when you press **Guide** (Xbox/Home) **+ Start** at the same time on any XInput-compatible controller. ⚡
 
 The main focus of the app is to be used in an HTPC setup from the couch for closing games that for some reason don't have an option to exit to desktop, but it can pretty much kill any program that is in focus.
