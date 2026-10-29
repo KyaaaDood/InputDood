@@ -82,6 +82,8 @@ Turning Mouse Mode off automatically releases any keys/clicks that might still b
 
 Every time you toggle it (either way), a big centered message flashes on screen for a couple of seconds and fades out on its own — green **"Mouse Mode ON"** when you turn it on, red **"Mouse Mode OFF"** when you turn it off — so it's obvious at a glance from across the room whether the controller is currently driving the mouse or not.
 
+> 🔊 **In fullscreen games** the message is not drawn (see [Fullscreen & anti-cheat](#️-fullscreen--anti-cheat)); instead you hear **two rising beeps** when turning it on and **two falling beeps** when turning it off.
+
 ### ⌨️ On-screen keyboard
 
 Press **Y** while in Mouse Mode to show/hide a custom on-screen keyboard — built entirely in-house, with no dependency on Windows' `osk.exe` or the touch keyboard (`TabTip.exe`), both of which can be unreliable (elevation issues, or missing services after debloating Windows).
@@ -92,6 +94,7 @@ Press **Y** while in Mouse Mode to show/hide a custom on-screen keyboard — bui
 - **⌫ Backspace** repeats automatically if you keep it held down, instead of needing to press it repeatedly.
 - **?123 / ABC** switches between the letter layout and a symbols/punctuation layout (`< >`, `@#$%`, brackets, quotes, etc.).
 - **✕** closes the keyboard from its own title bar.
+- 🔊 **It won't open over fullscreen games**: if you press **Y** while a game is fullscreen, you'll hear **three short low beeps** and the keyboard won't appear (so it doesn't kick you out of the game). See [Fullscreen & anti-cheat](#️-fullscreen--anti-cheat).
 
 ## 🗂️ Tray menu
 
@@ -105,11 +108,39 @@ Both left and right click on the tray icon open this menu.
 
 On top of the manual check, InputDood also checks for updates silently a few seconds after it starts — if there's nothing new, it says nothing at all; if there's a newer release, it shows the same "update available" prompt as the manual check.
 
+## 🖥️ Fullscreen & anti-cheat
+
+**Fullscreen.** The "Mouse Mode" message and the on-screen keyboard are regular Windows windows drawn *on top of* whatever is open. Games running in **exclusive fullscreen** (DirectX, e.g. FIFA 17) don't tolerate another window appearing over them: Windows minimizes them, drops them out of fullscreen or takes their focus away. So, since v0.2, InputDood detects when the active window is fullscreen and behaves like this:
+
+| Situation | Mouse Mode indicator | On-screen keyboard |
+|---|---|---|
+| Normal window / desktop | On-screen message | Works normally |
+| Fullscreen game | 2 rising beeps (ON) / 2 falling beeps (OFF) | Doesn't open; 3 short low beeps |
+
+The cursor, clicks, scrolling, volume and every other Mouse Mode button **do work** in fullscreen; what can't be done is *drawing* things over the game.
+
+To use the on-screen keyboard inside a game you have these options:
+
+1. **Windows fullscreen optimizations.** Right-click the game's `.exe` → Properties → Compatibility, and untick *"Disable fullscreen optimizations"*. For many DX11 games, Windows then treats them almost like a borderless window. To make InputDood show the message and keyboard there again, set `FULLSCREEN_SAFE_MODE := false` at the top of the `.ahk` (see [Configuration](#-configuration)).
+2. **Borderless window.** Set the game to windowed mode at native resolution and use a tool like Borderless Gaming to remove the border. This is the most reliable method.
+3. **In-game overlays** (Steam's keyboard, for example) work because they inject into the game. InputDood does **not** do this and never will: it is exactly the behavior anti-cheat systems flag.
+
+> ℹ️ Setting `FULLSCREEN_SAFE_MODE := false` disables this detection. By default, detection treats any window without a title bar that covers the whole monitor as "fullscreen", so it also applies to borderless games. In those cases the visual indicator and the keyboard are also replaced by beeps.
+
+**Anti-cheat.** InputDood is built on AutoHotkey, simulates mouse/keyboard input (`MouseMove`, `Click`, `Send`) and can kill processes (`WinKill`). Some anti-cheat systems, especially kernel-level ones (Vanguard, EasyAntiCheat, BattlEye, etc.), detect or restrict exactly that kind of tool, so:
+
+- You may get a warning, have the game refuse to launch or, in the worst case, get banned. **Compatibility with any online game is not guaranteed.**
+- **Don't use it with competitive online games protected by anti-cheat** unless you accept the risk. Single-player/offline games are usually fine.
+- If you want to be safe, close InputDood (tray menu → Exit) before launching the game.
+- InputDood doesn't inject into other processes, read other programs' memory or run elevated, but that doesn't stop an anti-cheat from flagging it just for using AutoHotkey.
+- The same goes for **antivirus detection**: the compiled `.exe` can trigger false positives because it's AutoHotkey.
+
 ## ⚠️ Known limitations
 
 - 🗝️ Your antivirus may block this application, but you can always take a look at the source code if you have any suspicions.
 - 🎮 If your controller isn't fully compatible with Windows' XInput driver (e.g. some DirectInput-only pads), the Guide button might not be detected.
 - 🔒 InputDood runs unelevated by design (safer, and less likely to get flagged by anti-cheat). This means it can't send clicks/keys to windows that are running as Administrator — you'd need to run InputDood elevated too for that, which isn't recommended for online games with kernel-level anti-cheat.
+- 🖥️ It can't draw the Mouse Mode indicator or the on-screen keyboard over fullscreen games (see [Fullscreen & anti-cheat](#️-fullscreen--anti-cheat)); it uses beeps instead.
 - ❌ You'll probably get warned by some anti-cheats about this app because it uses AutoHotkey, **USE IT AT YOUR OWN RISK, BE CAREFUL**.
 
 ## 🔧 Configuration
@@ -125,6 +156,7 @@ Everything adjustable lives at the top of the `.ahk` file:
 | `POLL_INTERVAL_IDLE_MS` | Combo polling frequency while Mouse Mode is off (default 100ms). |
 | `POLL_INTERVAL_MOUSE_MS` | Polling frequency while Mouse Mode is on, for smooth cursor movement (default 16ms). |
 | `MOUSE_INDICATOR_DURATION_MS` | How long the on-screen "Mouse Mode ON/OFF" message stays visible before fading out (default 2500ms). |
+| `FULLSCREEN_SAFE_MODE` | `true` (default): over fullscreen windows, the Mouse Mode message and the on-screen keyboard are not drawn and beeps are used instead. Set it to `false` if your game tolerates overlays (borderless window, fullscreen optimizations) and you want both there. |
 | `FORCE_KILL_GRACE_SEC` | How long to wait after the polite close attempt before force-killing an unresponsive window (default 2.0 seconds). |
 | `LEFT_STICK_DEADZONE` / `RIGHT_STICK_DEADZONE` | Stick deadzones (standard XInput defaults). |
 | `CURSOR_MAX_SPEED` | Max cursor speed in pixels per tick at full stick deflection (default 32). |
@@ -132,6 +164,10 @@ Everything adjustable lives at the top of the `.ahk` file:
 | `TRIGGER_THRESHOLD` | How far RT/LT need to be pulled (0-255) to register as a click (default 100). |
 | `VOLUME_REPEAT_MS` | How often volume repeats while the right stick is tilted vertically (default 120ms). |
 | `MEDIA_TRACK_DEADZONE` | How far the right stick needs to tilt horizontally to trigger next/previous track (default 20000, higher than the normal deadzone to avoid accidental skips). |
+
+## 📝 Changelog
+
+See [CHANGELOG.md](CHANGELOG.md).
 
 ## 🔨 Build the `.exe`
 

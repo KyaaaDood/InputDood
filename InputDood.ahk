@@ -7,8 +7,8 @@
 ; el .ahk tenga estas líneas (súbele el número de versión en cada release).
 ;@Ahk2Exe-SetName InputDood
 ;@Ahk2Exe-SetDescription InputDood - Gamepad Guide+Start task killer & mouse mode
-;@Ahk2Exe-SetVersion 0.1.0.0
-;@Ahk2Exe-SetProductVersion 0.1.0.0
+;@Ahk2Exe-SetVersion 0.2.0.0
+;@Ahk2Exe-SetProductVersion 0.2.0.0
 ;@Ahk2Exe-SetMainIcon icons\InputDood.ico
 ;@Ahk2Exe-SetProductName InputDood
 ;@Ahk2Exe-SetCompanyName KyaaaDood
@@ -21,7 +21,7 @@ Persistent
 ; Current version and GitHub repo, used by the auto-updater.
 ; IMPORTANT: change GITHUB_REPO to your actual user/repo before publishing,
 ; and bump APP_VERSION with every release you make.
-APP_VERSION := "0.1"
+APP_VERSION := "0.2"
 GITHUB_REPO := "kyaaadood/InputDood"
 
 RUN_KEY := "HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Run"
@@ -30,6 +30,13 @@ RUN_VALUE_NAME := "InputDood"
 ; How long to wait (in seconds) after the "polite" Alt+F4 before force-killing
 ; the process if the window is still open. Adjustable.
 FORCE_KILL_GRACE_SEC := 2.0
+
+; When true, InputDood never draws windows (Mouse Mode message, on-screen
+; keyboard) over a fullscreen window and uses beeps instead, because that
+; makes fullscreen games lose focus. Set it to false if your game runs in
+; a mode where overlays work fine (borderless window, fullscreen
+; optimizations) and you want the on-screen message/keyboard there too.
+FULLSCREEN_SAFE_MODE := true
 
 ; ==================== Localization ====================
 ; Minimal localization: defaults to English everywhere, and only switches
@@ -618,6 +625,23 @@ ShowMouseModeIndicator(isOn) {
         mouseModeIndicatorGui := ""
     }
 
+    ; If the foreground window is a fullscreen game, DON'T create any
+    ; window on top of it: in exclusive fullscreen (DirectX), Windows
+    ; kicks the game out of fullscreen / minimizes it / makes it lose
+    ; focus as soon as another topmost window appears, even one with
+    ; WS_EX_NOACTIVATE. An audio cue is used instead: two rising beeps
+    ; = ON, two falling beeps = OFF.
+    if IsForegroundFullscreen() {
+        if isOn {
+            SoundBeep(900, 90)
+            SoundBeep(1400, 120)
+        } else {
+            SoundBeep(1400, 90)
+            SoundBeep(900, 120)
+        }
+        return
+    }
+
     ; Font size proportional to screen height, so it's easy to make out
     ; both on a small monitor and on a big 4K TV from the couch. Clamped
     ; so it never looks ridiculous at either extreme.
@@ -652,6 +676,36 @@ ShowMouseModeIndicator(isOn) {
 
     mouseModeIndicatorGui := g
     SetTimer(HideMouseModeIndicator, -MOUSE_INDICATOR_DURATION_MS)
+}
+
+; True if the active window covers its whole monitor and has no title
+; bar (exclusive or borderless fullscreen game/video). A normal maximized
+; window has a caption and leaves the taskbar visible, so it doesn't count.
+IsForegroundFullscreen() {
+    global FULLSCREEN_SAFE_MODE
+    if !FULLSCREEN_SAFE_MODE
+        return false
+    hwnd := WinExist("A")
+    if !hwnd
+        return false
+    try {
+        cls := WinGetClass("ahk_id " . hwnd)
+        if (cls = "Progman" || cls = "WorkerW" || cls = "Shell_TrayWnd")
+            return false   ; desktop / taskbar
+        if ((WinGetStyle("ahk_id " . hwnd) & 0xC00000) = 0xC00000)
+            return false   ; has a title bar -> regular window
+        WinGetPos(&x, &y, &w, &h, "ahk_id " . hwnd)
+    } catch {
+        return false
+    }
+    hMon := DllCall("MonitorFromWindow", "Ptr", hwnd, "UInt", 2, "Ptr")  ; NEAREST
+    mi := Buffer(40, 0)
+    NumPut("UInt", 40, mi, 0)
+    if !DllCall("GetMonitorInfoW", "Ptr", hMon, "Ptr", mi)
+        return false
+    ml := NumGet(mi, 4, "Int"),  mt := NumGet(mi, 8, "Int")
+    mr := NumGet(mi, 12, "Int"), mb := NumGet(mi, 16, "Int")
+    return (x <= ml && y <= mt && x + w >= mr && y + h >= mb)
 }
 
 HideMouseModeIndicator() {
@@ -1062,6 +1116,19 @@ RedrawOskControl(ctrl) {
 
 ToggleOnScreenKeyboard() {
     global oskGui
+
+    ; Same limitation as the Mouse Mode indicator: a topmost window over
+    ; a fullscreen game makes it lose focus / drop out of fullscreen. If
+    ; the keyboard isn't already open and the foreground window is a
+    ; fullscreen one, refuse to open it and give an audio cue instead:
+    ; three short low beeps = "not available here".
+    oskVisible := (oskGui != "" && WinExist("ahk_id " . oskGui.Hwnd)
+        && DllCall("IsWindowVisible", "Ptr", oskGui.Hwnd))
+    if (!oskVisible && IsForegroundFullscreen()) {
+        Loop 3
+            SoundBeep(500, 70)
+        return
+    }
 
     if (oskGui = "" || !WinExist("ahk_id " . oskGui.Hwnd)) {
         oskGui := BuildOnScreenKeyboardGui()

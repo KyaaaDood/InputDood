@@ -82,6 +82,8 @@ Al desactivar el modo mouse se sueltan automáticamente las teclas o clics que p
 
 Cada vez que lo activas o desactivas, aparece un mensaje grande y centrado durante un par de segundos que se desvanece solo: **"Mouse Mode ON"** en verde al activarlo y **"Mouse Mode OFF"** en rojo al desactivarlo, así se nota de un vistazo desde lejos si el control está manejando el mouse o no.
 
+> 🔊 **En juegos a pantalla completa** el mensaje no se dibuja (ver [Pantalla completa](#️-pantalla-completa-y-anti-cheat)); en su lugar suenan **dos pitidos ascendentes** al activar y **dos descendentes** al desactivar.
+
 ### ⌨️ Teclado en pantalla
 
 Presiona **Y** en modo mouse para mostrar/ocultar un teclado en pantalla propio, construido por completo dentro de la app, sin depender de `osk.exe` de Windows ni del teclado táctil (`TabTip.exe`), que pueden fallar (problemas de elevación o servicios faltantes tras hacer debloat de Windows).
@@ -92,6 +94,7 @@ Presiona **Y** en modo mouse para mostrar/ocultar un teclado en pantalla propio,
 - **⌫ Retroceso** se repite automáticamente si lo mantienes presionado, sin tener que pulsarlo una y otra vez.
 - **?123 / ABC** alterna entre la distribución de letras y la de símbolos/puntuación (`< >`, `@#$%`, paréntesis, comillas, etc.).
 - **✕** cierra el teclado desde su propia barra de título.
+- 🔊 **No se abre sobre juegos a pantalla completa**: si presionas **Y** con un juego en fullscreen, suenan **tres pitidos graves cortos** y el teclado no aparece (para no sacarte del juego). Ve [Pantalla completa](#️-pantalla-completa-y-anti-cheat).
 
 ## 🗂️ Menú de la bandeja
 
@@ -105,11 +108,39 @@ Tanto el clic izquierdo como el derecho en el ícono de la bandeja abren este me
 
 Además de la revisión manual, InputDood también busca actualizaciones en silencio unos segundos después de iniciar: si no hay nada nuevo, no dice nada; si hay una versión más reciente, muestra el mismo aviso de "actualización disponible" que la revisión manual.
 
+## 🖥️ Pantalla completa y anti-cheat
+
+**Pantalla completa.** El aviso de "Mouse Mode" y el teclado en pantalla son ventanas normales de Windows que se dibujan *encima* de lo que tengas abierto. Los juegos en **pantalla completa exclusiva** (DirectX, por ejemplo FIFA 17) no toleran que aparezca otra ventana encima: Windows los minimiza, los saca de pantalla completa o les quita el foco. Por eso, desde la v0.2, InputDood detecta cuando la ventana activa está a pantalla completa y se comporta así:
+
+| Situación | Aviso de modo mouse | Teclado en pantalla |
+|---|---|---|
+| Ventana normal / escritorio | Mensaje en pantalla | Funciona normal |
+| Juego a pantalla completa | 2 pitidos ascendentes (ON) / 2 descendentes (OFF) | No se abre; 3 pitidos graves cortos |
+
+El cursor, los clics, el scroll, el volumen y el resto de los botones del modo mouse **sí funcionan** en pantalla completa; lo que no se puede es *dibujar* cosas encima del juego.
+
+Para poder usar el teclado en pantalla dentro de un juego tienes estas opciones:
+
+1. **Optimizaciones de pantalla completa de Windows.** Clic derecho al `.exe` del juego → Propiedades → Compatibilidad, y desmarca *"Deshabilitar optimizaciones de pantalla completa"*. En muchos juegos DX11 Windows entonces los trata casi como ventana sin bordes. Si tras hacerlo el juego ya no pierde el foco, de para que InputDood vuelva a mostrar el aviso y el teclado ahí, pon `FULLSCREEN_SAFE_MODE := false` al inicio del `.ahk` (ver [Configuración](#-configuración)).
+2. **Ventana sin bordes (borderless).** Pon el juego en modo ventana a la resolución nativa y usa una herramienta como Borderless Gaming para quitarle el borde. Es el método más confiable.
+3. **Overlays dentro del juego** (el teclado de Steam, por ejemplo) funcionan porque se inyectan en el juego. InputDood **no** hace esto y no lo hará: es justo el comportamiento que los anti-cheat marcan.
+
+> ℹ️ Con `FULLSCREEN_SAFE_MODE := false` se desactiva esta detección. Por defecto la detección considera "pantalla completa" a cualquier ventana sin barra de título que cubra todo el monitor, así que también aplica a juegos en modo sin bordes. En esos casos el aviso visual y el teclado también se reemplazan por pitidos.
+
+**Anti-cheat.** InputDood está hecho con AutoHotkey y simula entradas de mouse/teclado (`MouseMove`, `Click`, `Send`) y puede cerrar procesos (`WinKill`). Algunos anti-cheat, sobre todo los de nivel kernel (Vanguard, EasyAntiCheat, BattlEye, etc.), detectan o restringen justo ese tipo de herramientas, por lo que:
+
+- Podrías recibir una advertencia, que se bloquee el juego o, en el peor caso, un baneo. **No se garantiza compatibilidad con ningún juego en línea.**
+- **No lo uses con juegos en línea competitivos protegidos por anti-cheat** a menos que aceptes el riesgo. Para juegos de un jugador/offline no suele haber problema.
+- Si necesitas más seguridad, cierra InputDood (menú de la bandeja → Exit) antes de abrir el juego.
+- InputDood no se inyecta en otros procesos, no lee memoria de otros programas ni se ejecuta elevado, pero eso no evita que un anti-cheat lo marque solo por usar AutoHotkey.
+- Esto también aplica a la **detección de antivirus**: el `.exe` compilado puede dar falsos positivos por ser AutoHotkey.
+
 ## ⚠️ Limitaciones conocidas
 
 - 🗝️ Tu antivirus puede bloquear esta aplicación, pero siempre puedes revisar el código fuente si tienes alguna sospecha.
 - 🎮 Si tu control no es totalmente compatible con el driver XInput de Windows (por ejemplo, algunos controles solo DirectInput), puede que el botón Guide no se detecte.
 - 🔒 InputDood corre sin elevación por diseño (es más seguro y tiene menos probabilidad de ser marcado por los anti-cheat). Esto significa que no puede enviar clics/teclas a ventanas que se ejecuten como Administrador; para eso tendrías que ejecutar InputDood elevado también, lo cual no se recomienda en juegos en línea con anti-cheat a nivel de kernel.
+- 🖥️ No puede dibujar el aviso de modo mouse ni el teclado en pantalla sobre juegos a pantalla completa (ver [Pantalla completa y anti-cheat](#️-pantalla-completa-y-anti-cheat)); en esos casos usa pitidos.
 - ❌ Es probable que algunos anti-cheat te adviertan por esta app porque usa AutoHotkey. **ÚSALA BAJO TU PROPIO RIESGO, TEN CUIDADO**.
 
 ## 🔧 Configuración
@@ -125,6 +156,7 @@ Todo lo ajustable está al inicio del archivo `.ahk`:
 | `POLL_INTERVAL_IDLE_MS` | Frecuencia de sondeo del combo con el modo mouse apagado (por defecto 100 ms). |
 | `POLL_INTERVAL_MOUSE_MS` | Frecuencia de sondeo con el modo mouse activo, para un movimiento fluido del cursor (por defecto 16 ms). |
 | `MOUSE_INDICATOR_DURATION_MS` | Cuánto tiempo permanece visible el mensaje "Mouse Mode ON/OFF" antes de desvanecerse (por defecto 2500 ms). |
+| `FULLSCREEN_SAFE_MODE` | `true` (por defecto): sobre ventanas a pantalla completa no se dibuja el aviso de modo mouse ni el teclado, y se usan pitidos. Ponlo en `false` si tu juego tolera overlays (ventana sin bordes, optimizaciones de pantalla completa) y quieres ver ambos ahí. |
 | `FORCE_KILL_GRACE_SEC` | Cuánto esperar tras el intento de cierre amable antes de forzar el cierre de una ventana que no responde (por defecto 2.0 segundos). |
 | `LEFT_STICK_DEADZONE` / `RIGHT_STICK_DEADZONE` | Zonas muertas de los sticks (valores estándar de XInput). |
 | `CURSOR_MAX_SPEED` | Velocidad máxima del cursor en píxeles por tick con el stick a fondo (por defecto 32). |
@@ -132,6 +164,10 @@ Todo lo ajustable está al inicio del archivo `.ahk`:
 | `TRIGGER_THRESHOLD` | Qué tanto hay que jalar RT/LT (0-255) para que cuente como clic (por defecto 100). |
 | `VOLUME_REPEAT_MS` | Cada cuánto se repite el volumen mientras el stick derecho está inclinado verticalmente (por defecto 120 ms). |
 | `MEDIA_TRACK_DEADZONE` | Qué tanto hay que inclinar el stick derecho en horizontal para cambiar a la pista siguiente/anterior (por defecto 20000, mayor que la zona muerta normal para evitar saltos accidentales). |
+
+## 📝 Historial de cambios
+
+Consulta [CHANGELOG.es.md](CHANGELOG.es.md).
 
 ## 🔨 Compilar el `.exe`
 

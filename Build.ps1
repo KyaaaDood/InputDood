@@ -44,7 +44,8 @@ try {
     $src = Join-Path $here 'InputDood.ahk'
     if (-not (Test-Path $src)) { throw (L "No encuentro InputDood.ahk junto a Build.ps1." "Cannot find InputDood.ahk next to Build.ps1.") }
     $icon = Join-Path $here 'icons\InputDood.ico'
-    if (-not (Test-Path $icon)) { throw (L "No encuentro icons\InputDood.ico." "Cannot find icons\InputDood.ico.") }
+    $hasIcon = Test-Path $icon
+    if (-not $hasIcon) { Say (L "AVISO: no encuentro icons\InputDood.ico; se compila con el icono por defecto de AutoHotkey. Copia tu carpeta icons junto a Build.ps1 para usar tu icono." "WARNING: icons\InputDood.ico not found; building with AutoHotkey's default icon. Copy your icons folder next to Build.ps1 to use your own icon.") }
 
     # --- version: read APP_VERSION from InputDood.ahk ("0.1" -> "0.1.0.0" for the exe's file properties)
     $code = Get-Content $src -Raw -Encoding UTF8
@@ -74,7 +75,13 @@ try {
     $patched = [regex]::Replace($code, ';@Ahk2Exe-SetVersion\s+\S+', (';@Ahk2Exe-SetVersion ' + $ver4))
     $patched = [regex]::Replace($patched, ';@Ahk2Exe-SetProductVersion\s+\S+', (';@Ahk2Exe-SetProductVersion ' + $ver4))
     [System.IO.File]::WriteAllText($staged, $patched, (New-Object System.Text.UTF8Encoding($true)))
-    Copy-Item (Join-Path $here 'icons') (Join-Path $stage 'icons') -Recurse -Force
+    if ($hasIcon) {
+        Copy-Item (Join-Path $here 'icons') (Join-Path $stage 'icons') -Recurse -Force
+    } else {
+        # Without the icon file, the SetMainIcon directive would make Ahk2Exe fail.
+        $patched = [regex]::Replace($patched, '(?m)^;@Ahk2Exe-SetMainIcon.*\r?\n', '')
+        [System.IO.File]::WriteAllText($staged, $patched, (New-Object System.Text.UTF8Encoding($true)))
+    }
 
     # --- compile
     $out = Join-Path $dist 'InputDood.exe'
@@ -82,9 +89,9 @@ try {
     Say (L "Compilando ..." "Compiling ...")
     $compArgs = @('/in', ('"' + $staged + '"'),
               '/out', ('"' + $out + '"'),
-              '/base', ('"' + $base + '"'),
-              '/icon', ('"' + (Join-Path $stage 'icons\InputDood.ico') + '"'),
-              '/silent')
+              '/base', ('"' + $base + '"'))
+    if ($hasIcon) { $compArgs += @('/icon', ('"' + (Join-Path $stage 'icons\InputDood.ico') + '"')) }
+    $compArgs += '/silent'
     Start-Process -FilePath $ahk2exe -ArgumentList $compArgs -Wait | Out-Null
     if (-not (Test-Path $out)) { throw (L "Ahk2Exe no genero el .exe. Abre build\cache\Ahk2Exe.exe a mano para ver el error." "Ahk2Exe did not produce the .exe. Open build\cache\Ahk2Exe.exe by hand to see the error.") }
 
