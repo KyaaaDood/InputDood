@@ -173,8 +173,16 @@ Consulta [CHANGELOG.es.md](CHANGELOG.es.md).
 
 Haz doble clic en **`Build.bat`** (Windows, sin permisos de administrador). La primera vez descarga AutoHotkey v2 y Ahk2Exe en `build\cache`, y luego compila todo en **`dist\InputDood.exe`**: un solo archivo con el runtime de AutoHotkey y el ícono incluidos. La versión del exe se toma de `APP_VERSION` en `InputDood.ahk`. Si tu red bloquea las descargas, coloca `AutoHotkey64.exe` (v2) y `Ahk2Exe.exe` en `build\cache` y vuelve a ejecutarlo.
 
+## 📄 Licencia
+
+InputDood es software libre bajo la **[GNU GPL v2](LICENSE)**. Puedes usarlo, estudiarlo, modificarlo y compartirlo; si lo distribuyes (o distribuyes una versión modificada), debe mantenerse con la misma licencia e ir acompañado de su código fuente.
+
+El `InputDood.exe` compilado incluye [AutoHotkey v2](https://www.autohotkey.com) (GPLv2). Sus avisos y enlaces al código fuente están en [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+
 ## 💛 Créditos
 
 Hecho por **KyaaaDood** con Claude AI. 🤖✨
 
 Si quieres, puedes apoyarme en [Patreon](https://www.patreon.com/cw/KyaaaDood).
+
+InputDood incluye [AutoHotkey v2](https://www.autohotkey.com) (GPLv2); consulta [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
