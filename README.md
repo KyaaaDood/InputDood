@@ -60,10 +60,10 @@ Note: *[SuperF4](https://github.com/stefansundin/superf4) installed and running 
 
 Left click the tray icon (or *Open InputDood*) to open the window. Pages:
 
-- **Status** — whether a controller is detected, Mouse Mode state, your main shortcuts and a live *controller test* that shows the buttons you are pressing.
+- **Status** — whether a controller is detected, Mouse Mode state, a live *controller test*: an Xbox-style controller that lights up the buttons you press and shows both sticks and triggers moving.
 - **Shortcuts** — the list of every shortcut. **Add**, **Edit** (or double click), **Remove** or **Restore defaults**.
-- **Mouse mode** — cursor speed, response curve, dead zone, trigger threshold, how the ON/OFF message is shown (window / beeps / nothing) and the fullscreen-safe switch.
-- **Options** — language, theme (auto / light / dark), close grace time, run at startup, check for updates, open `config.ini`.
+- **Mouse mode** — cursor speed, response curve, dead zone, trigger threshold, scroll repeat timing, how the ON/OFF message is shown (window / beeps / nothing) and the fullscreen-safe switch.
+- **Options** — language, theme (auto / light / dark), close grace time, run at startup, administrator mode, check for updates, open `config.ini`.
 - **About** — version, links, manual update check.
 
 ### Editing a shortcut
@@ -90,8 +90,8 @@ Toggle with **Guide + Back**. While active, every button on the controller does 
 | Right Stick (left/right) | Previous/Next media track | One shot per tilt (must re-center before it fires again) |
 | RT (trigger) | Left click | Analog trigger, held while past the threshold |
 | LT (trigger) | Right click | Analog trigger, held while past the threshold |
-| RB | Scroll up | One step per press |
-| LB | Scroll down | One step per press |
+| LB | Scroll up | One step per press; keeps scrolling while held |
+| RB | Scroll down | One step per press; keeps scrolling while held |
 | A | Enter | Held down while the button is held |
 | B | Escape | Held down while the button is held |
 | X | Middle click | Held down while the button is held |
@@ -133,6 +133,16 @@ Press **Y** while in Mouse Mode to show/hide a custom on-screen keyboard — bui
 Left click opens the window; right click opens this menu.
 
 On top of the manual check, InputDood also checks for updates silently a few seconds after it starts — if there's nothing new, it says nothing at all; if there's a newer release, it shows the same "update available" prompt as the manual check.
+
+## 🛡️ Administrator mode
+
+Windows doesn't allow a normal program to click, type into or close a window that runs as administrator (Task Manager, for example). InputDood runs in normal mode by default (best for games and anti-cheat). If you need it:
+
+1. *Options* → **Allow controlling administrator windows** → Save. Windows asks for confirmation **once**, to create scheduled tasks with elevated rights.
+2. In the tray menu use **Restart as administrator** (and **Back to normal mode** before playing). No further prompts.
+3. *(Optional)* **Start InputDood as administrator with Windows** replaces the normal "Run at startup" entry.
+
+If **Guide + Start** can't close a window because it is an administrator window, you hear two low beeps and the Status page offers to restart as administrator. The tasks point to the current location of the program: if you move it, apply the option again. Don't use administrator mode with games protected by anti-cheat.
 
 ## 🖥️ Fullscreen & anti-cheat
 
@@ -187,6 +197,8 @@ cursorSpeed=32           ; 1-100
 curve=linear             ; linear | precise | sensitive
 deadzonePct=24           ; 5-40
 triggerPct=39            ; 10-90
+scrollDelayMs=350        ; 50-2000, wait before a held scroll button repeats
+scrollRateMs=60          ; 10-500, time between repeats
 
 [bindings]
 count=2

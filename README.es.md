@@ -60,10 +60,10 @@ Nota: *[SuperF4](https://github.com/stefansundin/superf4) instalado y en ejecuci
 
 Clic izquierdo en el ícono de la bandeja (o *Abrir InputDood*) para abrir la ventana. Páginas:
 
-- **Estado** — si hay control detectado, estado del modo mouse, tus atajos principales y una *prueba del control* en vivo que muestra los botones que estás presionando.
+- **Estado** — si hay control detectado, estado del modo mouse, una *prueba del control* en vivo: un control estilo Xbox que ilumina los botones que presionas y muestra los dos sticks y los gatillos moviéndose.
 - **Atajos** — la lista de todos los atajos. **Agregar**, **Editar** (o doble clic), **Quitar** o **Restaurar los predeterminados**.
-- **Modo mouse** — velocidad del cursor, curva de respuesta, zona muerta, umbral de gatillos, cómo se muestra el aviso ON/OFF (ventana / pitidos / nada) y el interruptor de pantalla completa segura.
-- **Opciones** — idioma, tema (auto / claro / oscuro), tiempo de gracia al cerrar, ejecutar al iniciar, buscar actualizaciones, abrir `config.ini`.
+- **Modo mouse** — velocidad del cursor, curva de respuesta, zona muerta, umbral de gatillos, tiempos del scroll continuo, cómo se muestra el aviso ON/OFF (ventana / pitidos / nada) y el interruptor de pantalla completa segura.
+- **Opciones** — idioma, tema (auto / claro / oscuro), tiempo de gracia al cerrar, ejecutar al iniciar, modo administrador, buscar actualizaciones, abrir `config.ini`.
 - **Acerca de** — versión, enlaces, búsqueda manual de actualizaciones.
 
 ### Editar un atajo
@@ -90,8 +90,8 @@ Se activa con **Guide + Back**. Mientras está activo, todos los botones del con
 | Stick derecho (izquierda/derecha) | Pista anterior/siguiente | Una vez por inclinación (hay que regresarlo al centro para que se active de nuevo) |
 | RT (gatillo) | Clic izquierdo | Gatillo analógico, se mantiene mientras pase el umbral |
 | LT (gatillo) | Clic derecho | Gatillo analógico, se mantiene mientras pase el umbral |
-| RB | Desplazar hacia arriba | Un paso por presión |
-| LB | Desplazar hacia abajo | Un paso por presión |
+| LB | Desplazar hacia arriba | Un paso por presión; sigue desplazando al mantenerlo |
+| RB | Desplazar hacia abajo | Un paso por presión; sigue desplazando al mantenerlo |
 | A | Enter | Se mantiene presionado mientras sostengas el botón |
 | B | Escape | Se mantiene presionado mientras sostengas el botón |
 | X | Clic central | Se mantiene presionado mientras sostengas el botón |
@@ -133,6 +133,16 @@ Presiona **Y** en modo mouse para mostrar/ocultar un teclado en pantalla propio,
 El clic izquierdo abre la ventana; el derecho abre este menú.
 
 Además de la revisión manual, InputDood también busca actualizaciones en silencio unos segundos después de iniciar: si no hay nada nuevo, no dice nada; si hay una versión más reciente, muestra el mismo aviso de "actualización disponible" que la revisión manual.
+
+## 🛡️ Modo administrador
+
+Windows no permite que un programa normal haga clic, escriba o cierre una ventana que corre como administrador (el Administrador de tareas, por ejemplo). InputDood corre en modo normal por defecto (lo mejor para juegos y anti-cheat). Si lo necesitas:
+
+1. *Opciones* → **Permitir controlar ventanas de administrador** → Guardar. Windows pide confirmación **una sola vez** para crear tareas programadas con permisos elevados.
+2. En el menú de la bandeja usa **Reiniciar como administrador** (y **Volver al modo normal** antes de jugar). Sin más avisos.
+3. *(Opcional)* **Iniciar InputDood como administrador con Windows** reemplaza la entrada normal de "Ejecutar al iniciar".
+
+Si **Guide + Start** no puede cerrar una ventana porque es de administrador, suenan dos pitidos graves y la página Estado te ofrece reiniciar como administrador. Las tareas apuntan a la ubicación actual del programa: si lo mueves, vuelve a aplicar la opción. No uses el modo administrador con juegos protegidos por anti-cheat.
 
 ## 🖥️ Pantalla completa y anti-cheat
 
@@ -187,6 +197,8 @@ cursorSpeed=32           ; 1-100
 curve=linear             ; linear | precise | sensitive
 deadzonePct=24           ; 5-40
 triggerPct=39            ; 10-90
+scrollDelayMs=350        ; 50-2000, espera antes de que un botón de scroll mantenido se repita
+scrollRateMs=60          ; 10-500, tiempo entre repeticiones
 
 [bindings]
 count=2
