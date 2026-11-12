@@ -2,7 +2,7 @@
 
 🇬🇧 English | [🇲🇽 Español](README.es.md)
 
-Ultra lightweight AutoHotkey v2 script that runs in the background and sends **WinClose + WinKill** when you press **Guide** (Xbox/Home) **+ Start** at the same time on any XInput-compatible controller. ⚡
+Ultra lightweight AutoHotkey v2 app with a small visual interface that runs in the background and, by default, sends **WinClose + WinKill** when you press **Guide** (Xbox/Home) **+ Start** at the same time on any XInput-compatible controller. ⚡
 
 The main focus of the app is to be used in an HTPC setup from the couch for closing games that for some reason don't have an option to exit to desktop, but it can pretty much kill any program that is in focus.
 
@@ -11,7 +11,9 @@ On top of that, it also includes an optional **full mouse + keyboard mode** (tog
 ## ✨ Features
 
 - 🎮 Detects the combo **on any XInput controller** (Xbox 360, One, Series, and most third-party/clone pads), no per-device button mapping needed.
-- 👻 Runs 100% in the background, with a system tray icon and no visible windows.
+- 🪟 **Visual interface (new in 0.3)** — a SyncDood-style window (sidebar, light/dark theme that follows Windows, flat buttons) with live controller status, shortcut editor, Mouse Mode settings and options. Open it from the tray icon.
+- ⌨️ **Configurable shortcuts (new in 0.3)** — add, edit or remove any controller shortcut (single buttons or combinations, including triggers and right-stick directions) and pick what it does; press the buttons on your controller to record the combination.
+- 👻 Stays in the background with a tray icon; when Windows starts it ("Run at startup") it doesn't open the window.
 - 🪶 Very low CPU usage: optimized 100ms polling, with a cache of which controller slots are connected to skip unnecessary calls (0% usage in my Ryzen 5600x and only 4mb of RAM usage).
 - 🖱️ **Full mouse & keyboard mode** — move the cursor, click, scroll, control media/volume, and even type using a built-in on-screen keyboard, all from the controller.
 - 🟢 **On-screen "Mouse Mode ON/OFF" indicator** — a big, centered, auto-fading message every time you toggle Mouse Mode, so you always know its state at a glance from the couch. Doesn't depend on Windows notifications (which are unreliable for unsigned scripts/exes) since it's drawn by InputDood itself.
@@ -39,23 +41,45 @@ Note: *[SuperF4](https://github.com/stefansundin/superf4) installed and running 
 
 ### Option A: Compiled executable
 1. Download the `.exe` from [Releases](../../releases) (or compile it yourself, see below).
-2. Run the executable. A tray icon (a red **I**) will appear. 🎮
-3. *(Optional)* Add it to the Windows startup folder by right clicking the tray icon and selecting "Run at startup". 🚀
+2. Run the executable. A tray icon (a red **I**) and the window will appear. 🎮
+3. *(Optional)* Right click the tray icon and select "Run at startup" (or use the toggle in the *Options* page). 🚀
 
 ### Option B: From source
 1. Install [AutoHotkey v2](https://www.autohotkey.com/).
-2. Download `InputDood.ahk` from this repo (plus the `icons` folder next to it if you want the tray icon).
+2. Download `InputDood.ahk` from this repo (plus the `icons` folder next to it for the tray icon and the logo).
 3. Run the script by double-clicking it, or compile it yourself with Ahk2Exe (right-click the `.ahk` → *Compile Script*; the icon in `icons\InputDood.ico` is applied automatically).
 
 ## ▶️ Usage
 
-1. Run this script (or its `.exe`). 🎮
+1. Run this script (or its `.exe`). The window opens; close it and InputDood keeps running in the tray. 🎮
 2. With the window you want to close in the foreground, press **Guide + Start** on your controller. 💥
 3. Press **Guide + Back** to toggle Mouse Mode on/off and take full control of your PC from the couch (see the table below).
+4. Want different buttons? Open the **Shortcuts** page and change them (next section).
+
+## 🪟 Window & custom shortcuts
+
+Left click the tray icon (or *Open InputDood*) to open the window. Pages:
+
+- **Status** — whether a controller is detected, Mouse Mode state, your main shortcuts and a live *controller test* that shows the buttons you are pressing.
+- **Shortcuts** — the list of every shortcut. **Add**, **Edit** (or double click), **Remove** or **Restore defaults**.
+- **Mouse mode** — cursor speed, response curve, dead zone, trigger threshold, how the ON/OFF message is shown (window / beeps / nothing) and the fullscreen-safe switch.
+- **Options** — language, theme (auto / light / dark), close grace time, run at startup, check for updates, open `config.ini`.
+- **About** — version, links, manual update check.
+
+### Editing a shortcut
+
+1. Press **Add** (or select one and press **Edit**).
+2. Click **Press on controller** and hold the buttons you want at the same time; release them and the combination is recorded. You can also type it, e.g. `Guide+Start`.
+3. Choose **when** it works: **Always**, or **Mouse Mode only**.
+4. Choose the **action** (close window, toggle Mouse Mode, clicks, scroll, Enter/Esc/Space/Tab/arrows, Alt+Tab, Windows key, media/volume, on-screen keyboard…). *Send a key or text* and *Hold a key* let you type your own key (AutoHotkey syntax, e.g. `{F11}`, `^c` or `Space`).
+
+Buttons you can use: Guide, LB, RB, LT, RT, Start, Back, L3, R3, A, B, X, Y, D-pad (4 directions) and right-stick directions (4).
+
+Rules: when two combinations overlap, **the longest one wins** (holding Guide + Start runs only that shortcut, not Start alone). *Always* shortcuts react to any connected controller; *Mouse Mode only* ones react to the first controller. The default shortcuts reproduce exactly what the table below lists.
 
 ## 🖱️ Mouse Mode
 
-Toggle with **Guide + Back**. While active, every button on the controller does something useful — nothing is left unmapped:
+Toggle with **Guide + Back**. While active, every button on the controller does something useful. The table shows the **default** shortcuts (all of them can be changed in the *Shortcuts* page):
 
 | Button | Action | Notes |
 |---|---|---|
@@ -98,13 +122,15 @@ Press **Y** while in Mouse Mode to show/hide a custom on-screen keyboard — bui
 
 ## 🗂️ Tray menu
 
+- 🪟 **Open InputDood** — opens the window (also the default left click).
+- 🖱️ **Mouse mode** — toggle it without the controller.
 - ℹ️ **About** — project credits and instructions.
 - 🔄 **Check for updates** — manually asks GitHub for the latest release right away. If you're already on the latest version it'll tell you so; if there's an update, it offers to open the download page for you.
 - ☕ **Donations** — link to [Patreon](https://www.patreon.com/cw/KyaaaDood).
 - 🚀 **Run at startup** — self-explanatory.
 - ❌ **Exit** — closes the script.
 
-Both left and right click on the tray icon open this menu.
+Left click opens the window; right click opens this menu.
 
 On top of the manual check, InputDood also checks for updates silently a few seconds after it starts — if there's nothing new, it says nothing at all; if there's a newer release, it shows the same "update available" prompt as the manual check.
 
@@ -121,11 +147,11 @@ The cursor, clicks, scrolling, volume and every other Mouse Mode button **do wor
 
 To use the on-screen keyboard inside a game you have these options:
 
-1. **Windows fullscreen optimizations.** Right-click the game's `.exe` → Properties → Compatibility, and untick *"Disable fullscreen optimizations"*. For many DX11 games, Windows then treats them almost like a borderless window. To make InputDood show the message and keyboard there again, set `FULLSCREEN_SAFE_MODE := false` at the top of the `.ahk` (see [Configuration](#-configuration)).
+1. **Windows fullscreen optimizations.** Right-click the game's `.exe` → Properties → Compatibility, and untick *"Disable fullscreen optimizations"*. For many DX11 games, Windows then treats them almost like a borderless window. To make InputDood show the message and keyboard there again, untick *Don't draw windows over fullscreen games* in the *Mouse mode* page (see [Configuration](#-configuration)).
 2. **Borderless window.** Set the game to windowed mode at native resolution and use a tool like Borderless Gaming to remove the border. This is the most reliable method.
 3. **In-game overlays** (Steam's keyboard, for example) work because they inject into the game. InputDood does **not** do this and never will: it is exactly the behavior anti-cheat systems flag.
 
-> ℹ️ Setting `FULLSCREEN_SAFE_MODE := false` disables this detection. By default, detection treats any window without a title bar that covers the whole monitor as "fullscreen", so it also applies to borderless games. In those cases the visual indicator and the keyboard are also replaced by beeps.
+> ℹ️ Unticking that option disables this detection. By default, detection treats any window without a title bar that covers the whole monitor as "fullscreen", so it also applies to borderless games. In those cases the visual indicator and the keyboard are also replaced by beeps.
 
 **Anti-cheat.** InputDood is built on AutoHotkey, simulates mouse/keyboard input (`MouseMove`, `Click`, `Send`) and can kill processes (`WinKill`). Some anti-cheat systems, especially kernel-level ones (Vanguard, EasyAntiCheat, BattlEye, etc.), detect or restrict exactly that kind of tool, so:
 
@@ -145,25 +171,32 @@ To use the on-screen keyboard inside a game you have these options:
 
 ## 🔧 Configuration
 
-Everything adjustable lives at the top of the `.ahk` file:
+Since 0.3 everything is changed from the window and saved in **`%AppData%\InputDood\config.ini`** (the *Options* page has buttons to open the file or its folder). You can also edit it by hand:
 
-| Variable | What it does |
-|---|---|
-| `APP_VERSION` | Current version number, shown in *About* and compared against the latest GitHub release to detect updates. Bump this on every release you publish. |
-| `GITHUB_REPO` | `"user/repo"` used by the auto-updater to query `api.github.com`. If you fork this project, change it to your own repo or the update checks will point at the wrong place. |
-| `XI_START` / `XI_GUIDE` / `XI_BACK` | Bits of the combos to detect. Can be swapped for other buttons in the XInput bitmask. |
-| `ScanIntervalMs` | How often it checks for newly connected/disconnected controllers (default 3000ms). |
-| `POLL_INTERVAL_IDLE_MS` | Combo polling frequency while Mouse Mode is off (default 100ms). |
-| `POLL_INTERVAL_MOUSE_MS` | Polling frequency while Mouse Mode is on, for smooth cursor movement (default 16ms). |
-| `MOUSE_INDICATOR_DURATION_MS` | How long the on-screen "Mouse Mode ON/OFF" message stays visible before fading out (default 2500ms). |
-| `FULLSCREEN_SAFE_MODE` | `true` (default): over fullscreen windows, the Mouse Mode message and the on-screen keyboard are not drawn and beeps are used instead. Set it to `false` if your game tolerates overlays (borderless window, fullscreen optimizations) and you want both there. |
-| `FORCE_KILL_GRACE_SEC` | How long to wait after the polite close attempt before force-killing an unresponsive window (default 2.0 seconds). |
-| `LEFT_STICK_DEADZONE` / `RIGHT_STICK_DEADZONE` | Stick deadzones (standard XInput defaults). |
-| `CURSOR_MAX_SPEED` | Max cursor speed in pixels per tick at full stick deflection (default 32). |
-| `CURSOR_CURVE_EXPONENT` | Stick response curve. `1.0` = linear/predictable (default). `>1.0` softens slow/medium movements but keeps the same top speed. `<1.0` makes the cursor more sensitive near the center. |
-| `TRIGGER_THRESHOLD` | How far RT/LT need to be pulled (0-255) to register as a click (default 100). |
-| `VOLUME_REPEAT_MS` | How often volume repeats while the right stick is tilted vertically (default 120ms). |
-| `MEDIA_TRACK_DEADZONE` | How far the right stick needs to tilt horizontally to trigger next/previous track (default 20000, higher than the normal deadzone to avoid accidental skips). |
+```ini
+[general]
+language=auto            ; auto | en | es
+theme=auto               ; auto | light | dark
+checkUpdates=1
+fullscreenSafe=1
+forceKillGraceSec=2
+
+[mouse]
+indicator=window         ; window | beep | none
+cursorSpeed=32           ; 1-100
+curve=linear             ; linear | precise | sensitive
+deadzonePct=24           ; 5-40
+triggerPct=39            ; 10-90
+
+[bindings]
+count=2
+b1=always|Guide+Start|close_window
+b2=always|Guide+Back|toggle_mouse
+```
+
+Each shortcut is `scope|buttons|action` (`scope` = `always` or `mouse`; custom actions are written `custom_tap:{F11}` / `custom_hold:Space`). If `[bindings]` doesn't exist the defaults are used.
+
+A few advanced values are still constants at the top of the `.ahk`: `APP_VERSION`, `GITHUB_REPO`, `POLL_INTERVAL_IDLE_MS` (100), `POLL_INTERVAL_MOUSE_MS` (16), `VOLUME_REPEAT_MS` (120), `MEDIA_TRACK_DEADZONE` (20000) and `MOUSE_INDICATOR_DURATION_MS` (2500).
 
 ## 📝 Changelog
 

@@ -2,7 +2,7 @@
 
 [🇬🇧 English](README.md) | 🇲🇽 Español
 
-Script ultraligero de AutoHotkey v2 que corre en segundo plano y envía **WinClose + WinKill** cuando presionas **Guide** (Xbox/Home) **+ Start** al mismo tiempo en cualquier control compatible con XInput. ⚡
+App ultraligera de AutoHotkey v2 con una interfaz visual sencilla que corre en segundo plano y, por defecto, envía **WinClose + WinKill** cuando presionas **Guide** (Xbox/Home) **+ Start** al mismo tiempo en cualquier control compatible con XInput. ⚡
 
 El objetivo principal de la app es usarse en una configuración HTPC desde el sillón, para cerrar juegos que por alguna razón no tienen opción de salir al escritorio, pero prácticamente puede cerrar cualquier programa que esté en primer plano.
 
@@ -11,7 +11,9 @@ Además, incluye un **modo completo de mouse + teclado** opcional (se activa con
 ## ✨ Características
 
 - 🎮 Detecta el combo **en cualquier control XInput** (Xbox 360, One, Series y la mayoría de los controles de terceros/clones), sin necesidad de mapear botones por dispositivo.
-- 👻 Corre 100% en segundo plano, con un ícono en la bandeja del sistema y sin ventanas visibles.
+- 🪟 **Interfaz visual (nuevo en 0.3)** — ventana al estilo de SyncDood (barra lateral, tema claro/oscuro que sigue a Windows, botones planos) con estado del control en vivo, editor de atajos, ajustes del modo mouse y opciones. Se abre desde el ícono de la bandeja.
+- ⌨️ **Atajos configurables (nuevo en 0.3)** — agrega, edita o quita cualquier atajo del control (botones sueltos o combinaciones, incluyendo gatillos y direcciones del stick derecho) y elige qué hace; presiona los botones en tu control para grabar la combinación.
+- 👻 Se queda en segundo plano con un ícono en la bandeja; cuando Windows lo inicia ("Ejecutar al iniciar") no abre la ventana.
 - 🪶 Uso de CPU muy bajo: sondeo optimizado cada 100 ms, con un caché de qué ranuras de control están conectadas para evitar llamadas innecesarias (0% de uso en mi Ryzen 5600X y solo 4 MB de RAM).
 - 🖱️ **Modo completo de mouse y teclado** — mueve el cursor, haz clic, desplázate, controla medios/volumen e incluso escribe con un teclado en pantalla integrado, todo desde el control.
 - 🟢 **Indicador en pantalla de "Mouse Mode ON/OFF"** — un mensaje grande, centrado y que se desvanece solo cada vez que activas o desactivas el modo mouse, para que siempre sepas su estado de un vistazo desde el sillón. No depende de las notificaciones de Windows (que no son confiables con scripts/exes sin firmar) porque lo dibuja el propio InputDood.
@@ -40,7 +42,7 @@ Nota: *[SuperF4](https://github.com/stefansundin/superf4) instalado y en ejecuci
 ### Opción A: Ejecutable compilado
 1. Descarga el `.exe` desde [Releases](../../releases) (o compílalo tú mismo, ve más abajo).
 2. Ejecuta el programa. Aparecerá un ícono en la bandeja (una **I** roja). 🎮
-3. *(Opcional)* Agrégalo al inicio de Windows con clic derecho en el ícono de la bandeja y seleccionando "Run at startup" (Ejecutar al iniciar). 🚀
+3. *(Opcional)* Clic derecho en el ícono de la bandeja → "Ejecutar al iniciar" (o el interruptor de la página *Opciones*). 🚀
 
 ### Opción B: Desde el código fuente
 1. Instala [AutoHotkey v2](https://www.autohotkey.com/).
@@ -49,9 +51,31 @@ Nota: *[SuperF4](https://github.com/stefansundin/superf4) instalado y en ejecuci
 
 ## ▶️ Uso
 
-1. Ejecuta este script (o su `.exe`). 🎮
+1. Ejecuta este script (o su `.exe`). Se abre la ventana; ciérrala y InputDood sigue corriendo en la bandeja. 🎮
 2. Con la ventana que quieres cerrar en primer plano, presiona **Guide + Start** en tu control. 💥
 3. Presiona **Guide + Back** para activar/desactivar el modo mouse y tomar el control completo de tu PC desde el sillón (consulta la tabla de abajo).
+4. ¿Quieres otros botones? Abre la página **Atajos** y cámbialos (siguiente sección).
+
+## 🪟 Ventana y atajos personalizados
+
+Clic izquierdo en el ícono de la bandeja (o *Abrir InputDood*) para abrir la ventana. Páginas:
+
+- **Estado** — si hay control detectado, estado del modo mouse, tus atajos principales y una *prueba del control* en vivo que muestra los botones que estás presionando.
+- **Atajos** — la lista de todos los atajos. **Agregar**, **Editar** (o doble clic), **Quitar** o **Restaurar los predeterminados**.
+- **Modo mouse** — velocidad del cursor, curva de respuesta, zona muerta, umbral de gatillos, cómo se muestra el aviso ON/OFF (ventana / pitidos / nada) y el interruptor de pantalla completa segura.
+- **Opciones** — idioma, tema (auto / claro / oscuro), tiempo de gracia al cerrar, ejecutar al iniciar, buscar actualizaciones, abrir `config.ini`.
+- **Acerca de** — versión, enlaces, búsqueda manual de actualizaciones.
+
+### Editar un atajo
+
+1. Presiona **Agregar** (o selecciona uno y presiona **Editar**).
+2. Haz clic en **Presionar en el control** y mantén a la vez los botones que quieras; suéltalos y la combinación queda grabada. También puedes escribirla, por ejemplo `Guide+Start`.
+3. Elige **cuándo** funciona: **Siempre**, o **Solo Modo mouse**.
+4. Elige la **acción** (cerrar ventana, activar modo mouse, clics, scroll, Enter/Esc/Espacio/Tab/flechas, Alt+Tab, tecla Windows, multimedia/volumen, teclado en pantalla…). *Enviar una tecla o texto* y *Mantener una tecla* te dejan escribir tu propia tecla (sintaxis de AutoHotkey, por ejemplo `{F11}`, `^c` o `Space`).
+
+Botones que puedes usar: Guide, LB, RB, LT, RT, Start, Back, L3, R3, A, B, X, Y, cruceta (4 direcciones) y direcciones del stick derecho (4).
+
+Reglas: cuando dos combinaciones se traslapan, **gana la más larga** (con Guide + Start se ejecuta solo ese atajo, no Start solo). Los atajos *Siempre* responden a cualquier control conectado; los de *Solo en modo mouse* responden al primer control. Los atajos predeterminados reproducen exactamente lo que dice la tabla de abajo.
 
 ## 🖱️ Modo mouse
 
@@ -98,13 +122,15 @@ Presiona **Y** en modo mouse para mostrar/ocultar un teclado en pantalla propio,
 
 ## 🗂️ Menú de la bandeja
 
+- 🪟 **Abrir InputDood** — abre la ventana (también es el clic izquierdo).
+- 🖱️ **Modo mouse** — actívalo sin usar el control.
 - ℹ️ **About** — créditos del proyecto e instrucciones.
 - 🔄 **Check for updates** (Buscar actualizaciones) — le pregunta a GitHub por la última versión al instante. Si ya tienes la más reciente, te lo avisa; si hay una actualización, te ofrece abrir la página de descarga.
 - ☕ **Donations** — enlace a [Patreon](https://www.patreon.com/cw/KyaaaDood).
 - 🚀 **Run at startup** — ejecutar al iniciar Windows.
 - ❌ **Exit** — cierra el script.
 
-Tanto el clic izquierdo como el derecho en el ícono de la bandeja abren este menú.
+El clic izquierdo abre la ventana; el derecho abre este menú.
 
 Además de la revisión manual, InputDood también busca actualizaciones en silencio unos segundos después de iniciar: si no hay nada nuevo, no dice nada; si hay una versión más reciente, muestra el mismo aviso de "actualización disponible" que la revisión manual.
 
@@ -121,11 +147,11 @@ El cursor, los clics, el scroll, el volumen y el resto de los botones del modo m
 
 Para poder usar el teclado en pantalla dentro de un juego tienes estas opciones:
 
-1. **Optimizaciones de pantalla completa de Windows.** Clic derecho al `.exe` del juego → Propiedades → Compatibilidad, y desmarca *"Deshabilitar optimizaciones de pantalla completa"*. En muchos juegos DX11 Windows entonces los trata casi como ventana sin bordes. Si tras hacerlo el juego ya no pierde el foco, de para que InputDood vuelva a mostrar el aviso y el teclado ahí, pon `FULLSCREEN_SAFE_MODE := false` al inicio del `.ahk` (ver [Configuración](#-configuración)).
+1. **Optimizaciones de pantalla completa de Windows.** Clic derecho al `.exe` del juego → Propiedades → Compatibilidad, y desmarca *"Deshabilitar optimizaciones de pantalla completa"*. En muchos juegos DX11 Windows entonces los trata casi como ventana sin bordes. Si tras hacerlo el juego ya no pierde el foco, de para que InputDood vuelva a mostrar el aviso y el teclado ahí, pon desmarca *No dibujar ventanas sobre juegos en pantalla completa* al inicio del `.ahk` (ver [Configuración](#-configuración)).
 2. **Ventana sin bordes (borderless).** Pon el juego en modo ventana a la resolución nativa y usa una herramienta como Borderless Gaming para quitarle el borde. Es el método más confiable.
 3. **Overlays dentro del juego** (el teclado de Steam, por ejemplo) funcionan porque se inyectan en el juego. InputDood **no** hace esto y no lo hará: es justo el comportamiento que los anti-cheat marcan.
 
-> ℹ️ Con `FULLSCREEN_SAFE_MODE := false` se desactiva esta detección. Por defecto la detección considera "pantalla completa" a cualquier ventana sin barra de título que cubra todo el monitor, así que también aplica a juegos en modo sin bordes. En esos casos el aviso visual y el teclado también se reemplazan por pitidos.
+> ℹ️ Con desmarca *No dibujar ventanas sobre juegos en pantalla completa* se desactiva esta detección. Por defecto la detección considera "pantalla completa" a cualquier ventana sin barra de título que cubra todo el monitor, así que también aplica a juegos en modo sin bordes. En esos casos el aviso visual y el teclado también se reemplazan por pitidos.
 
 **Anti-cheat.** InputDood está hecho con AutoHotkey y simula entradas de mouse/teclado (`MouseMove`, `Click`, `Send`) y puede cerrar procesos (`WinKill`). Algunos anti-cheat, sobre todo los de nivel kernel (Vanguard, EasyAntiCheat, BattlEye, etc.), detectan o restringen justo ese tipo de herramientas, por lo que:
 
@@ -145,25 +171,32 @@ Para poder usar el teclado en pantalla dentro de un juego tienes estas opciones:
 
 ## 🔧 Configuración
 
-Todo lo ajustable está al inicio del archivo `.ahk`:
+Desde la 0.3 todo se cambia desde la ventana y se guarda en **`%AppData%\InputDood\config.ini`** (la página *Opciones* tiene botones para abrir el archivo o su carpeta). También puedes editarlo a mano:
 
-| Variable | Qué hace |
-|---|---|
-| `APP_VERSION` | Número de versión actual, se muestra en *About* y se compara con el último release de GitHub para detectar actualizaciones. Súbela en cada release que publiques. |
-| `GITHUB_REPO` | `"usuario/repo"` que usa el actualizador automático para consultar `api.github.com`. Si haces un fork del proyecto, cámbialo por tu propio repo o la revisión de actualizaciones apuntará al lugar equivocado. |
-| `XI_START` / `XI_GUIDE` / `XI_BACK` | Bits de los combos a detectar. Se pueden cambiar por otros botones de la máscara de XInput. |
-| `ScanIntervalMs` | Cada cuánto busca controles recién conectados/desconectados (por defecto 3000 ms). |
-| `POLL_INTERVAL_IDLE_MS` | Frecuencia de sondeo del combo con el modo mouse apagado (por defecto 100 ms). |
-| `POLL_INTERVAL_MOUSE_MS` | Frecuencia de sondeo con el modo mouse activo, para un movimiento fluido del cursor (por defecto 16 ms). |
-| `MOUSE_INDICATOR_DURATION_MS` | Cuánto tiempo permanece visible el mensaje "Mouse Mode ON/OFF" antes de desvanecerse (por defecto 2500 ms). |
-| `FULLSCREEN_SAFE_MODE` | `true` (por defecto): sobre ventanas a pantalla completa no se dibuja el aviso de modo mouse ni el teclado, y se usan pitidos. Ponlo en `false` si tu juego tolera overlays (ventana sin bordes, optimizaciones de pantalla completa) y quieres ver ambos ahí. |
-| `FORCE_KILL_GRACE_SEC` | Cuánto esperar tras el intento de cierre amable antes de forzar el cierre de una ventana que no responde (por defecto 2.0 segundos). |
-| `LEFT_STICK_DEADZONE` / `RIGHT_STICK_DEADZONE` | Zonas muertas de los sticks (valores estándar de XInput). |
-| `CURSOR_MAX_SPEED` | Velocidad máxima del cursor en píxeles por tick con el stick a fondo (por defecto 32). |
-| `CURSOR_CURVE_EXPONENT` | Curva de respuesta del stick. `1.0` = lineal/predecible (por defecto). `>1.0` suaviza los movimientos lentos/medios pero mantiene la misma velocidad máxima. `<1.0` hace el cursor más sensible cerca del centro. |
-| `TRIGGER_THRESHOLD` | Qué tanto hay que jalar RT/LT (0-255) para que cuente como clic (por defecto 100). |
-| `VOLUME_REPEAT_MS` | Cada cuánto se repite el volumen mientras el stick derecho está inclinado verticalmente (por defecto 120 ms). |
-| `MEDIA_TRACK_DEADZONE` | Qué tanto hay que inclinar el stick derecho en horizontal para cambiar a la pista siguiente/anterior (por defecto 20000, mayor que la zona muerta normal para evitar saltos accidentales). |
+```ini
+[general]
+language=auto            ; auto | en | es
+theme=auto               ; auto | light | dark
+checkUpdates=1
+fullscreenSafe=1
+forceKillGraceSec=2
+
+[mouse]
+indicator=window         ; window | beep | none
+cursorSpeed=32           ; 1-100
+curve=linear             ; linear | precise | sensitive
+deadzonePct=24           ; 5-40
+triggerPct=39            ; 10-90
+
+[bindings]
+count=2
+b1=always|Guide+Start|close_window
+b2=always|Guide+Back|toggle_mouse
+```
+
+Cada atajo es `alcance|botones|acción` (`alcance` = `always` o `mouse`; las acciones personalizadas se escriben `custom_tap:{F11}` / `custom_hold:Space`). Si no existe `[bindings]` se usan los predeterminados.
+
+Algunos valores avanzados siguen siendo constantes al inicio del `.ahk`: `APP_VERSION`, `GITHUB_REPO`, `POLL_INTERVAL_IDLE_MS` (100), `POLL_INTERVAL_MOUSE_MS` (16), `VOLUME_REPEAT_MS` (120), `MEDIA_TRACK_DEADZONE` (20000) y `MOUSE_INDICATOR_DURATION_MS` (2500).
 
 ## 📝 Historial de cambios
 
